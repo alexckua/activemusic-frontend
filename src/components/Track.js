@@ -12,19 +12,35 @@ class Track extends React.Component {
     }
 
     componentDidMount() {
-        let api_tracks_url = process.env.REACT_APP_API_SERVER + '/tracks.json'
-        
-        axios.get(api_tracks_url)
+        let api_server_url = process.env.REACT_APP_API_SERVER
+
+        axios({
+            url: api_server_url,
+            method: 'post',
+            data: {
+                query: `
+                    {
+                        allTracks {
+                            id
+                            title
+                        }
+                    }
+                `
+            }
+        })
             .then(response => {
-                this.setState({tracks: response.data})
+                this.setState({tracks: response.data.data.allTracks})
         })
     }
 
     render() {
         return(
             <div>
-                <h1>Tracks</h1> 
-                { this.state.tracks.map(track => <p key={track.id}>Title: {track.title}</p>) }
+                <ul className='list-group'>
+                    { this.state.tracks.map(track => 
+                        <li className='list-group-item' key={track.id}>Title: {track.title}</li>
+                    ) }
+                </ul>
             </div>
         )
     }
